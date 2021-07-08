@@ -30,6 +30,16 @@ fn check_lists_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, error: T) -> bool
 }
 
 #[test]
+#[should_panic(expected = "Ring degree should be equal to vector length. 10 != 9")]
+fn test_check_coeff_length() {
+    let poly = Polynomial {
+        ring_degree: 10,
+        coeffs: vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+    };
+    poly.check_coeff_length();
+}
+
+#[test]
 fn test_add_known_answer() {
     let poly1 = Polynomial {
         ring_degree: 10,
@@ -49,14 +59,8 @@ fn test_add_known_answer() {
 #[test]
 #[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
 fn test_add_different_ring_degrees_fail() {
-    let poly1 = Polynomial {
-        ring_degree: 10,
-        coeffs: vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-    };
-    let poly2 = Polynomial {
-        ring_degree: 14,
-        coeffs: vec![4.0, 5.0, 4.0, 8.0, 9.0, 1.0, 1.0, 1.0, 1.0, 3.0],
-    };
+    let poly1: Polynomial<f64> = Polynomial::new(10);
+    let poly2: Polynomial<f64> = Polynomial::new(14);
 
     // Should panic because the polynomials have different ring degrees.
     poly1.add(&poly2);
@@ -140,14 +144,8 @@ fn test_multiply_known_answer() {
 #[test]
 #[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
 fn test_multiply_different_ring_degrees_fail() {
-    let poly1 = Polynomial {
-        ring_degree: 10,
-        coeffs: vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
-    };
-    let poly2 = Polynomial {
-        ring_degree: 14,
-        coeffs: vec![4.0, 5.0, 4.0, 8.0, 9.0, 1.0, 1.0, 1.0, 1.0, 3.0],
-    };
+    let poly1: Polynomial<f64> = Polynomial::new(10);
+    let poly2: Polynomial<f64> = Polynomial::new(14);
 
     // Should panic because the polynomials have different ring degrees.
     poly1.multiply(&poly2);
@@ -243,4 +241,42 @@ fn test_distributive() {
 
     assert_eq!(total1.ring_degree, total2.ring_degree);
     assert!(check_lists_almost_equal(total1.coeffs, total2.coeffs, 0.00000001));
+}
+
+#[test]
+fn test_multiply_by_x_known_answer() {
+    let poly = Polynomial {
+        ring_degree: 10,
+        coeffs: vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+    };
+
+    let prod = poly.multiply_by_x();
+
+    assert_eq!(prod.ring_degree, poly.ring_degree);
+    assert_eq!(prod.coeffs, vec![10.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+}
+
+#[test]
+fn test_multiply_by_x_compare_multiply() {
+    // Generate random polynomials.
+    let mut rng = rand::thread_rng();
+    let ring_degree = rng.gen_range(1..=2048);
+    let rand_vec: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
+    let poly = Polynomial {
+        ring_degree,
+        coeffs: rand_vec,
+    };
+
+    let mut x_vec: Vec<f64> = vec![0.0; ring_degree];
+    x_vec[1] = 1.0;
+    let x_poly = Polynomial {
+        ring_degree,
+        coeffs: x_vec,
+    };
+
+    let prod1 = poly.multiply_by_x();
+    let prod2 = poly.multiply(&x_poly);
+
+    assert_eq!(prod1.ring_degree, prod2.ring_degree);
+    assert_eq!(prod1.coeffs, prod2.coeffs);
 }
