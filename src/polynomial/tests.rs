@@ -14,9 +14,6 @@ fn generate_random_float_vector<T>(size: usize) -> Vec<T>
 
 #[test]
 fn test_add() {
-    let coeffs: Vec<f64> = generate_random_float_vector(10);
-    println!("Random coeffs: {:?}", coeffs);
-    //// Here
     let poly1 = Polynomial {
         ring_degree: 10,
         coeffs: vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
@@ -46,4 +43,21 @@ fn test_add_different_ring_degrees() {
 
     // Should panic because the polynomials have different ring degrees.
     poly1.add(&poly2);
+}
+
+#[test]
+fn test_multiply() {
+    let poly1 = Polynomial {
+        ring_degree: 10,
+        coeffs: vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+    };
+    let poly2 = Polynomial {
+        ring_degree: 10,
+        coeffs: vec![4.0, 5.0, 4.0, 8.0, 9.0, 1.0, 1.0, 1.0, 1.0, 3.0],
+    };
+
+    let sum = poly1.multiply(&poly2);
+
+    assert_eq!(sum.ring_degree, poly1.ring_degree);
+    assert_eq!(sum.coeffs, vec![241.0, 228.0, 225.0, 182.0, 129.0, 156.0, 183.0, 210.0, 237.0, 244.0]);
 }
