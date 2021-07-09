@@ -1,7 +1,8 @@
 use rand::{distributions::Standard, prelude::Distribution, Rng};
-use std::ops::{Add, Sub, Mul};
+use std::ops::{Add, AddAssign, Sub, Mul};
 use std::fmt::Debug;
 use std::cmp::PartialEq;
+use crate::polynomial::Polynomial;
 use crate::ring::{Complex, ModInteger32, ModInteger64};
 use crate::traits::{Zero, One, Abs};
 
@@ -60,4 +61,44 @@ pub fn generate_random_modint64_vector(size: usize) -> Vec<ModInteger64> {
         rand_vec.push(ModInteger64{value: rng.gen_range(0..(2^64))});
     }
     rand_vec
+}
+
+pub fn generate_random_float_polynomial_vector<T>(size: usize, ring_degree: usize) -> Vec<Polynomial<T>> 
+        where Standard: Distribution<T>, T: Mul<Output = T> + Add + Sub + Zero<T> +
+        One<T> + Sub<Output = T> + Copy + Add<Output = T> + Abs<T> + Debug + PartialEq + AddAssign {
+    let mut rand_poly_vec: Vec<Polynomial<T>> = Vec::new();
+    for _ in 0..size {
+        let rand_vec: Vec<T> = generate_random_float_vector(ring_degree);
+        rand_poly_vec.push(Polynomial{ring_degree, coeffs: rand_vec});
+    }
+    rand_poly_vec
+}
+
+pub fn generate_random_complex_polynomial_vector<T>(size: usize, ring_degree: usize) -> Vec<Polynomial<Complex<T>>> 
+        where Standard: Distribution<T>, T: Mul<Output = T> + Add + Sub + Zero<T> +
+        One<T> + Sub<Output = T> + Copy + Add<Output = T> + Abs<T> + Debug + PartialEq + AddAssign {
+    let mut rand_poly_vec: Vec<Polynomial<Complex<T>>> = Vec::new();
+    for _ in 0..size {
+        let rand_vec: Vec<Complex<T>> = generate_random_complex_vector(ring_degree);
+        rand_poly_vec.push(Polynomial{ring_degree, coeffs: rand_vec});
+    }
+    rand_poly_vec
+}
+
+pub fn generate_random_modint32_polynomial_vector(size: usize, ring_degree: usize) -> Vec<Polynomial<ModInteger32>> {
+    let mut rand_poly_vec: Vec<Polynomial<ModInteger32>> = Vec::new();
+    for _ in 0..size {
+        let rand_vec: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
+        rand_poly_vec.push(Polynomial{ring_degree, coeffs: rand_vec});
+    }
+    rand_poly_vec
+}
+
+pub fn generate_random_modint64_polynomial_vector(size: usize, ring_degree: usize) -> Vec<Polynomial<ModInteger64>> {
+    let mut rand_poly_vec: Vec<Polynomial<ModInteger64>> = Vec::new();
+    for _ in 0..size {
+        let rand_vec: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
+        rand_poly_vec.push(Polynomial{ring_degree, coeffs: rand_vec});
+    }
+    rand_poly_vec
 }
