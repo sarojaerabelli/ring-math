@@ -7,8 +7,8 @@ use std::ops::{Sub, Div};
 use std::cmp::PartialOrd;
 
 const MAX_TEST_DEGREE: usize = 2048;
-const F32_ADD_ERROR: f32 = 0.000001;
-const F32_MULTIPLY_ERROR: f32 = 0.01;
+const F32_ADD_ERROR: f64 = 0.000001;
+const F32_MULTIPLY_ERROR: f64 = 0.01;
 const F64_ERROR: f64 = 0.0000000001;
 
 #[test]
@@ -71,7 +71,7 @@ fn test_add_different_ring_degrees_fail_complex_f64() {
     test_add_different_ring_degrees_fail::<Complex<f64>>();
 }
 
-fn test_add_commutative_float<T>(error: T)
+fn test_add_commutative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
         Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd  + std::fmt::Debug +
         Div + Abs<T> + Div<Output = T>{
@@ -108,7 +108,7 @@ fn test_add_commutative_float_f64() {
     test_add_commutative_float::<f64>(F64_ERROR);
 }
 
-fn test_add_associative_float<T>(error: T)
+fn test_add_associative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
         Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
         Div + Abs<T> + Div<Output = T>{
@@ -204,7 +204,7 @@ fn test_multiply_different_ring_degrees_fail_complex_f64() {
     test_multiply_different_ring_degrees_fail::<Complex<f64>>();
 }
 
-fn test_multiply_commutative_float<T>(error: T)
+fn test_multiply_commutative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
         Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
         Div + Abs<T> + Div<Output = T> {
@@ -241,7 +241,7 @@ fn test_multiply_commutative_float_f64() {
     test_multiply_commutative_float::<f64>(F64_ERROR);
 }
 
-fn test_multiply_associative_float<T>(error: T)
+fn test_multiply_associative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
         Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
         Div + Abs<T> + Div<Output = T> {
@@ -286,7 +286,7 @@ fn test_multiply_associative_float_f64() {
     test_multiply_associative_float::<f64>(F64_ERROR);
 }
 
-fn test_distributive_float<T>(error: T)
+fn test_distributive_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
         Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
         Div + Abs<T> + Div<Output = T> {

@@ -4,15 +4,15 @@ use std::ops::{Sub, Mul, Div};
 use std::fmt::Debug;
 
 pub trait Abs<T> {
-    fn abs(self) -> T;
+    fn abs(self) -> f64;
 }
 
 impl Abs<f32> for f32 {
-    fn abs(self) -> f32 {
+    fn abs(self) -> f64 {
         if self > 0.0 {
-            return self;
+            return self as f64;
         } else {
-            return -self;
+            return -self as f64;
         }
     }
 }
@@ -37,7 +37,7 @@ pub fn generate_random_float_vector<T>(size: usize) -> Vec<T>
     rand_vec
 }
 
-pub fn check_lists_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, percent_error: T) -> bool 
+pub fn check_lists_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, percent_error: f64) -> bool 
         where T: PartialOrd + Copy + Sub<Output = T> + Div<Output = T> + Debug + Div + Abs<T> + Div<Output = T> {
     if vec1.len() != vec2.len() {
         return false;
