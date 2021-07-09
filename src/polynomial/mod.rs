@@ -22,7 +22,7 @@ impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Polynomi
     /// # Output
     /// * a new instantiation of a Polynomial, equal to 0
     /// ```
-    fn new(ring_degree: usize) -> Polynomial<T> {
+    pub fn new(ring_degree: usize) -> Polynomial<T> {
         Polynomial {ring_degree,
                     coeffs: vec![T::zero(); ring_degree] }
     }
@@ -101,7 +101,6 @@ impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Polynomi
         }
         prod
     }
-
 }
 
 #[cfg(test)]

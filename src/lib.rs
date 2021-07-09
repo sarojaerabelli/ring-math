@@ -1,5 +1,6 @@
 //! Math module
 pub mod polynomial;
+pub mod vector;
 pub mod ring;
 pub mod utilities;
 
