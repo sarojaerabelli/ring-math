@@ -50,7 +50,5 @@ impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy> Ze
     }
 }
 
-
-
 #[cfg(test)]
 mod tests;

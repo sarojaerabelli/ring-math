@@ -1,15 +1,33 @@
 // Tests
 use super::*;
 use rand::{distributions::Standard, prelude::Distribution, Rng};
-use utilities::{generate_random_float_vector, check_lists_almost_equal, Abs};
+use utilities::{generate_random_float_vector};
 use crate::ring::Complex;
+use crate::traits::Abs;
 use std::ops::{Sub, Div};
 use std::cmp::PartialOrd;
+use std::fmt::Debug;
 
 const MAX_TEST_DEGREE: usize = 2048;
 const F32_ADD_ERROR: f64 = 0.000001;
 const F32_MULTIPLY_ERROR: f64 = 0.01;
 const F64_ERROR: f64 = 0.0000000001;
+
+pub fn check_vecs_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, percent_error: f64) -> bool 
+        where T: Copy + Sub<Output = T> + Debug + Abs<T>{
+    if vec1.len() != vec2.len() {
+        return false;
+    }
+
+    for i in 0..vec1.len() {
+        if T::abs(vec1[i] - vec2[i]) / T::abs(vec1[i]) > percent_error {
+            println!("vec1[{:?}] = {:?} and vec2[{:?}] = {:?}", i, vec1[i], i, vec2[i]);
+            return false;
+        }
+    }
+
+    true
+}
 
 #[test]
 #[should_panic(expected = "Ring degree should be equal to vector length. 10 != 9")]
@@ -95,7 +113,7 @@ fn test_add_commutative_float<T>(error: f64)
     let sum2 = poly2.add(&poly1);
 
     assert_eq!(sum1.ring_degree, sum2.ring_degree);
-    assert!(check_lists_almost_equal(sum1.coeffs, sum2.coeffs, error));
+    assert!(check_vecs_almost_equal(sum1.coeffs, sum2.coeffs, error));
 }
 
 #[test]
@@ -140,7 +158,7 @@ fn test_add_associative_float<T>(error: f64)
     let total_sum2 = poly1.add(&sum2);
 
     assert_eq!(total_sum1.ring_degree, total_sum2.ring_degree);
-    assert!(check_lists_almost_equal(total_sum1.coeffs, total_sum2.coeffs, error));
+    assert!(check_vecs_almost_equal(total_sum1.coeffs, total_sum2.coeffs, error));
 }
 
 #[test]
@@ -228,7 +246,7 @@ fn test_multiply_commutative_float<T>(error: f64)
     let prod2 = poly2.multiply(&poly1);
 
     assert_eq!(prod1.ring_degree, prod2.ring_degree);
-    assert!(check_lists_almost_equal(prod1.coeffs, prod2.coeffs, error));
+    assert!(check_vecs_almost_equal(prod1.coeffs, prod2.coeffs, error));
 }
 
 #[test]
@@ -273,7 +291,7 @@ fn test_multiply_associative_float<T>(error: f64)
     let total_prod2 = poly1.multiply(&prod2);
 
     assert_eq!(total_prod1.ring_degree, total_prod2.ring_degree);
-    assert!(check_lists_almost_equal(total_prod1.coeffs, total_prod2.coeffs, error));
+    assert!(check_vecs_almost_equal(total_prod1.coeffs, total_prod2.coeffs, error));
 }
 
 #[test]
@@ -320,7 +338,7 @@ fn test_distributive_float<T>(error: f64)
     let total2 = prod1.add(&prod2);
 
     assert_eq!(total1.ring_degree, total2.ring_degree);
-    assert!(check_lists_almost_equal(total1.coeffs, total2.coeffs, error));
+    assert!(check_vecs_almost_equal(total1.coeffs, total2.coeffs, error));
 }
 
 #[test]
