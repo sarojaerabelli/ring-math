@@ -6,8 +6,8 @@ use zama_math::traits::{Abs, Zero, One};
 use std::ops::{Add, AddAssign, Sub, Mul, Div};
 use std::cmp::{PartialOrd, PartialEq};
 use std::fmt::Debug;
-use zama_math::utilities::{generate_random_float_vector, generate_random_complex_vector,
-                           generate_random_modint32_vector, generate_random_modint64_vector};
+use zama_math::utilities::{generate_random_float_polynomial, generate_random_complex_polynomial,
+                           generate_random_modint32_polynomial, generate_random_modint64_polynomial};
 
 pub fn bench_float<T>(c: &mut Criterion, ring_degree: usize)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
@@ -15,16 +15,8 @@ pub fn bench_float<T>(c: &mut Criterion, ring_degree: usize)
         Div + Abs<T> + Div<Output = T> + One<T> + PartialEq {
     let name = format!("Add polynomials of degree {} with type {}", ring_degree,
                        std::any::type_name::<T>());
-    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
     c.bench_function(name.as_str(), |b| {
         b.iter(|| {
             black_box(poly1.multiply(&poly2));
@@ -38,16 +30,8 @@ pub fn bench_complex<T>(c: &mut Criterion, ring_degree: usize)
         Div + Abs<T> + Div<Output = T> + One<T> + PartialEq {
     let name = format!("Add polynomials of degree {} with type {}", ring_degree,
                        std::any::type_name::<Complex<T>>());
-    let rand_vec1: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec2: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
     c.bench_function(name.as_str(), |b| {
         b.iter(|| {
             black_box(poly1.multiply(&poly2));
@@ -58,16 +42,8 @@ pub fn bench_complex<T>(c: &mut Criterion, ring_degree: usize)
 pub fn bench_modint32(c: &mut Criterion, ring_degree: usize) {
     let name = format!("Add polynomials of degree {} with type {}", ring_degree,
                        std::any::type_name::<ModInteger32>());
-    let rand_vec1: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
     c.bench_function(name.as_str(), |b| {
         b.iter(|| {
             black_box(poly1.multiply(&poly2));
@@ -78,16 +54,8 @@ pub fn bench_modint32(c: &mut Criterion, ring_degree: usize) {
 pub fn bench_modint64(c: &mut Criterion, ring_degree: usize) {
     let name = format!("Add polynomials of degree {} with type {}", ring_degree,
                        std::any::type_name::<ModInteger64>());
-    let rand_vec1: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
     c.bench_function(name.as_str(), |b| {
         b.iter(|| {
             black_box(poly1.multiply(&poly2));
@@ -191,12 +159,12 @@ pub fn bench_modint64_16384(c: &mut Criterion) {
     bench_modint64(c, 16384);
 }ion};
 use zama_math::polynomial::Polynomial;
-use zama_math::utilities::generate_random_float_vector;
+use zama_math::utilities::generate_random_float_polynomial;
 
 pub fn bench<T>(c: &mut Criterion, ring_degree: usize) {
     let name = format!("Multiply polynomials of degree {} with type {}", ring_degree, std::any::type_name::<T>());
-    let rand_vec1: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec2: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
+    let rand_vec1: Vec<f64> = generate_random_float_polynomial::<f64>(ring_degree);
+    let rand_vec2: Vec<f64> = generate_random_float_polynomial::<f64>(ring_degree);
     let poly1 = Polynomial {
         ring_degree,
         coeffs: rand_vec1,

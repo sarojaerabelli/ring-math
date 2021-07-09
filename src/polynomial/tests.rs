@@ -1,9 +1,9 @@
 // Tests
 use super::*;
 use rand::{distributions::Standard, prelude::Distribution, Rng};
-use crate::utilities::{check_vecs_almost_equal, generate_random_float_vector,
-                       generate_random_complex_vector, generate_random_modint32_vector,
-                       generate_random_modint64_vector};
+use crate::utilities::{check_vecs_almost_equal, generate_random_float_polynomial,
+                       generate_random_complex_polynomial, generate_random_modint32_polynomial,
+                       generate_random_modint64_polynomial};
 use crate::ring::{Complex, ModInteger32, ModInteger64};
 use crate::traits::{Abs, Zero, One};
 use std::ops::{Sub, Div};
@@ -94,17 +94,8 @@ fn test_add_commutative_float<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
 
     // Test that p1 + p2 = p2 + p1.
     let sum1 = poly1.add(&poly2);
@@ -131,17 +122,8 @@ fn test_add_commutative_complex<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec2: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
 
     // Test that p1 + p2 = p2 + p1.
     let sum1 = poly1.add(&poly2);
@@ -166,17 +148,8 @@ fn test_add_commutative_modint32() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
 
     // Test that p1 + p2 = p2 + p1.
     let sum1 = poly1.add(&poly2);
@@ -191,17 +164,8 @@ fn test_add_commutative_modint64() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
 
     // Test that p1 + p2 = p2 + p1.
     let sum1 = poly1.add(&poly2);
@@ -218,22 +182,9 @@ fn test_add_associative_float<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec3: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly3: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
 
     // Test that (p1 + p2) + p3 = p1 + (p2 + p3).
     let sum1 = poly1.add(&poly2);
@@ -263,22 +214,9 @@ fn test_add_associative_complex<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec2: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec3: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly3: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
 
     // Test that (p1 + p2) + p3 = p1 + (p2 + p3).
     let sum1 = poly1.add(&poly2);
@@ -306,23 +244,9 @@ fn test_add_associative_modint32() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec3: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly3: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
 
     // Test that (p1 + p2) + p3 = p1 + (p2 + p3).
     let sum1 = poly1.add(&poly2);
@@ -340,23 +264,9 @@ fn test_add_associative_modint64() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec3: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly3: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
 
     // Test that (p1 + p2) + p3 = p1 + (p2 + p3).
     let sum1 = poly1.add(&poly2);
@@ -439,17 +349,8 @@ fn test_multiply_commutative_float<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
 
     // Test that p1 * p2 = p2 * p1.
     let prod1 = poly1.multiply(&poly2);
@@ -476,17 +377,8 @@ fn test_multiply_commutative_complex<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec2: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
 
     // Test that p1 * p2 = p2 * p1.
     let prod1 = poly1.multiply(&poly2);
@@ -511,17 +403,8 @@ fn test_multiply_commutative_modint32() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
 
     // Test that p1 * p2 = p2 * p1.
     let prod1 = poly1.multiply(&poly2);
@@ -536,17 +419,8 @@ fn test_multiply_commutative_modint64() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
+    let poly1: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
 
     // Test that p1 * p2 = p2 * p1.
     let prod1 = poly1.multiply(&poly2);
@@ -563,22 +437,9 @@ fn test_multiply_associative_float<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec3: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly3: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
 
     // Test that (p1 * p2) * p3 = p1 * (p2 * p3).
     let prod1 = poly1.multiply(&poly2);
@@ -608,22 +469,9 @@ fn test_multiply_associative_complex<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec2: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec3: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly3: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
 
     // Test that (p1 * p2) * p3 = p1 * (p2 * p3).
     let prod1 = poly1.multiply(&poly2);
@@ -651,23 +499,9 @@ fn test_multiply_associative_modint32() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec3: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly3: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
 
     // Test that (p1 * p2) * p3 = p1 * (p2 * p3).
     let prod1 = poly1.multiply(&poly2);
@@ -685,23 +519,9 @@ fn test_multiply_associative_modint64() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec3: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly3: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
 
     // Test that (p1 * p2) * p3 = p1 * (p2 * p3).
     let prod1 = poly1.multiply(&poly2);
@@ -722,22 +542,9 @@ fn test_distributive_float<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let rand_vec3: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
+    let poly3: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
 
     // Test that p1 * (p2 + p3) = p1 * p2 + p1 * p3
     let sum1 = poly2.add(&poly3);
@@ -769,22 +576,9 @@ fn test_distributive_complex<T>(error: f64)
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec2: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let rand_vec3: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly2: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
+    let poly3: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
 
     // Test that p1 * (p2 + p3) = p1 * p2 + p1 * p3
     let sum1 = poly2.add(&poly3);
@@ -813,23 +607,9 @@ fn test_distributive_modint32() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-    let rand_vec3: Vec<ModInteger32> = generate_random_modint32_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
+    let poly3: Polynomial<ModInteger32> = generate_random_modint32_polynomial(ring_degree);
 
    // Test that p1 * (p2 + p3) = p1 * p2 + p1 * p3
     let sum1 = poly2.add(&poly3);
@@ -848,23 +628,9 @@ fn test_distributive_modint64() {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec1: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec2: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-    let rand_vec3: Vec<ModInteger64> = generate_random_modint64_vector(ring_degree);
-
-    let poly1 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec1,
-    };
-    let poly2 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec2,
-    };
-
-    let poly3 = Polynomial {
-        ring_degree,
-        coeffs: rand_vec3,
-    };
+    let poly1: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly2: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
+    let poly3: Polynomial<ModInteger64> = generate_random_modint64_polynomial(ring_degree);
 
    // Test that p1 * (p2 + p3) = p1 * p2 + p1 * p3
     let sum1 = poly2.add(&poly3);
@@ -898,11 +664,7 @@ fn test_multiply_by_x_compare_multiply_float<T>()
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec: Vec<T> = generate_random_float_vector::<T>(ring_degree);
-    let poly = Polynomial {
-        ring_degree,
-        coeffs: rand_vec,
-    };
+    let poly: Polynomial<T> = generate_random_float_polynomial::<T>(ring_degree);
 
     let mut x_vec: Vec<T> = vec![T::zero(); ring_degree];
     x_vec[1] = T::one();
@@ -935,11 +697,7 @@ fn test_multiply_by_x_compare_multiply_complex<T>()
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
     let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
-    let rand_vec: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
-    let poly = Polynomial {
-        ring_degree,
-        coeffs: rand_vec,
-    };
+    let poly: Polynomial<Complex<T>> = generate_random_complex_polynomial::<T>(ring_degree);
 
     let mut x_vec: Vec<Complex<T>> = vec![Complex::<T>::zero(); ring_degree];
     x_vec[1] = Complex::<T>::one();
