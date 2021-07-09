@@ -4,6 +4,22 @@ use std::fmt::Debug;
 use crate::ring::{Complex, ModInteger32, ModInteger64};
 use crate::traits::{Zero, Abs};
 
+pub fn check_vecs_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, percent_error: f64) -> bool 
+        where T: Copy + Sub<Output = T> + Debug + Abs<T>{
+    if vec1.len() != vec2.len() {
+        return false;
+    }
+
+    for i in 0..vec1.len() {
+        if T::abs(vec1[i] - vec2[i]) / T::abs(vec1[i]) > percent_error {
+            println!("vec1[{:?}] = {:?} and vec2[{:?}] = {:?}", i, vec1[i], i, vec2[i]);
+            return false;
+        }
+    }
+
+    true
+}
+
 pub fn generate_random_float_vector<T>(size: usize) -> Vec<T> 
         where Standard: Distribution<T>, T: Mul<Output = T> {
     let mut rng = rand::thread_rng();
