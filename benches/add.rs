@@ -71,28 +71,12 @@ pub fn bench_f32_4096(c: &mut Criterion) {
     bench_float::<f32>(c, 4096);
 }
 
-pub fn bench_f32_8192(c: &mut Criterion) {
-    bench_float::<f32>(c, 8192);
-}
-
-pub fn bench_f32_16384(c: &mut Criterion) {
-    bench_float::<f32>(c, 16384);
-}
-
 pub fn bench_f64_2048(c: &mut Criterion) {
     bench_float::<f64>(c, 2048);
 }
 
 pub fn bench_f64_4096(c: &mut Criterion) {
     bench_float::<f64>(c, 4096);
-}
-
-pub fn bench_f64_8192(c: &mut Criterion) {
-    bench_float::<f64>(c, 8192);
-}
-
-pub fn bench_f64_16384(c: &mut Criterion) {
-    bench_float::<f64>(c, 16384);
 }
 
 pub fn bench_complex_f32_2048(c: &mut Criterion) {
@@ -103,28 +87,12 @@ pub fn bench_complex_f32_4096(c: &mut Criterion) {
     bench_complex::<f32>(c, 4096);
 }
 
-pub fn bench_complex_f32_8192(c: &mut Criterion) {
-    bench_complex::<f32>(c, 8192);
-}
-
-pub fn bench_complex_f32_16384(c: &mut Criterion) {
-    bench_complex::<f32>(c, 16384);
-}
-
 pub fn bench_complex_f64_2048(c: &mut Criterion) {
     bench_complex::<f64>(c, 2048);
 }
 
 pub fn bench_complex_f64_4096(c: &mut Criterion) {
     bench_complex::<f64>(c, 4096);
-}
-
-pub fn bench_complex_f64_8192(c: &mut Criterion) {
-    bench_complex::<f64>(c, 8192);
-}
-
-pub fn bench_complex_f64_16384(c: &mut Criterion) {
-    bench_complex::<f64>(c, 16384);
 }
 
 pub fn bench_modint32_2048(c: &mut Criterion) {
@@ -135,26 +103,10 @@ pub fn bench_modint32_4096(c: &mut Criterion) {
     bench_modint32(c, 4096);
 }
 
-pub fn bench_modint32_8192(c: &mut Criterion) {
-    bench_modint32(c, 8192);
-}
-
-pub fn bench_modint32_16384(c: &mut Criterion) {
-    bench_modint32(c, 16384);
-}
-
 pub fn bench_modint64_2048(c: &mut Criterion) {
     bench_modint64(c, 2048);
 }
 
 pub fn bench_modint64_4096(c: &mut Criterion) {
     bench_modint64(c, 4096);
-}
-
-pub fn bench_modint64_8192(c: &mut Criterion) {
-    bench_modint64(c, 8192);
-}
-
-pub fn bench_modint64_16384(c: &mut Criterion) {
-    bench_modint64(c, 16384);
 }
