@@ -7,7 +7,7 @@ use crate::vector::{Vector, Matrix};
 use crate::ring::{Complex, ModInteger32, ModInteger64};
 use crate::traits::{Zero, One, Abs};
 
-pub fn check_vecs_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, percent_error: f64) -> bool 
+pub fn check_vecs_almost_equal<T>(vec1: &Vec<T>, vec2: &Vec<T>, percent_error: f64) -> bool 
         where T: Copy + Sub<Output = T> + Debug + Abs<T>{
     if vec1.len() != vec2.len() {
         return false;

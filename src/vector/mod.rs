@@ -17,23 +17,24 @@ pub struct Vector<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAss
 
 impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Vector<T> {
 
-    /// Return a new zero polynomial.
+    /// Add a vector to another vector in the ring.
     ///
     /// # Arguments
-    /// * `ring_degree` - Degree N of ring.
+    /// * `other` - other vector to add
     ///
     /// # Output
-    /// * a new instantiation of a Polynomial, equal to 0
+    /// * a new instantiation of a vector, which is the sum of the two vectors
     /// ```
-    pub fn new(ring_degree: usize, length: usize) -> Vector<T> {
-        let mut poly_vec: Vec<Polynomial::<T>> = Vec::new();
-        for _ in 0..length {
-            poly_vec.push(Polynomial::<T>::new(ring_degree))
+    pub fn add(&self, other: &Vector<T>) -> Vector<T> {
+        if self.length != other.length {
+            panic!("Vector lengths should be equal. {} != {}", self.length, other.length);
         }
 
-        Vector {ring_degree,
-                length,
-                polys: poly_vec}
+        let mut sum_polys: Vec<Polynomial<T>> = Vec::new();
+        for i in 0..self.length {
+            sum_polys.push(self.polys[i].add(&other.polys[i]));
+        }
+        Vector{ring_degree: self.ring_degree, length: self.length, polys: sum_polys}
     }
 
     /// Compute the dot product of two vectors.
@@ -73,6 +74,29 @@ pub struct Matrix<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAss
 }
 
 impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Matrix<T> {
+
+    /// Add a matrix to another matrix in the ring.
+    ///
+    /// # Arguments
+    /// * `other` - other matrix to add
+    ///
+    /// # Output
+    /// * a new instantiation of a matrix, which is the sum of the two matrices
+    /// ```
+    pub fn add(&self, other: &Matrix<T>) -> Matrix<T> {
+        if self.num_rows != other.num_rows {
+            panic!("Row lengths should be equal. {} != {}", self.num_rows, other.num_rows);
+        }
+        if self.num_cols != other.num_cols {
+            panic!("Column lengths should be equal. {} != {}", self.num_cols, other.num_cols);
+        }
+
+        let mut sum_vecs: Vec<Vector<T>> = Vec::new();
+        for i in 0..self.num_cols {
+            sum_vecs.push(self.cols[i].add(&other.cols[i]));
+        }
+        Matrix{ring_degree: self.ring_degree, num_rows: self.num_rows, num_cols: self.num_cols, cols: sum_vecs}
+    }
 
     /// Compute the matrix product with a vector on the left.
     ///

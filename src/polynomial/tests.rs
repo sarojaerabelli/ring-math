@@ -102,7 +102,7 @@ fn test_add_commutative_float<T>(error: f64)
     let sum2 = poly2.add(&poly1);
 
     assert_eq!(sum1.ring_degree, sum2.ring_degree);
-    assert!(check_vecs_almost_equal(sum1.coeffs, sum2.coeffs, error));
+    assert!(check_vecs_almost_equal(&sum1.coeffs, &sum2.coeffs, error));
 }
 
 #[test]
@@ -130,7 +130,7 @@ fn test_add_commutative_complex<T>(error: f64)
     let sum2 = poly2.add(&poly1);
 
     assert_eq!(sum1.ring_degree, sum2.ring_degree);
-    assert!(check_vecs_almost_equal(sum1.coeffs, sum2.coeffs, error));
+    assert!(check_vecs_almost_equal(&sum1.coeffs, &sum2.coeffs, error));
 }
 
 #[test]
@@ -194,7 +194,7 @@ fn test_add_associative_float<T>(error: f64)
     let total_sum2 = poly1.add(&sum2);
 
     assert_eq!(total_sum1.ring_degree, total_sum2.ring_degree);
-    assert!(check_vecs_almost_equal(total_sum1.coeffs, total_sum2.coeffs, error));
+    assert!(check_vecs_almost_equal(&total_sum1.coeffs, &total_sum2.coeffs, error));
 }
 
 #[test]
@@ -226,7 +226,7 @@ fn test_add_associative_complex<T>(error: f64)
     let total_sum2 = poly1.add(&sum2);
 
     assert_eq!(total_sum1.ring_degree, total_sum2.ring_degree);
-    assert!(check_vecs_almost_equal(total_sum1.coeffs, total_sum2.coeffs, error));
+    assert!(check_vecs_almost_equal(&total_sum1.coeffs, &total_sum2.coeffs, error));
 }
 
 #[test]
@@ -357,7 +357,7 @@ fn test_multiply_commutative_float<T>(error: f64)
     let prod2 = poly2.multiply(&poly1);
 
     assert_eq!(prod1.ring_degree, prod2.ring_degree);
-    assert!(check_vecs_almost_equal(prod1.coeffs, prod2.coeffs, error));
+    assert!(check_vecs_almost_equal(&prod1.coeffs, &prod2.coeffs, error));
 }
 
 #[test]
@@ -385,7 +385,7 @@ fn test_multiply_commutative_complex<T>(error: f64)
     let prod2 = poly2.multiply(&poly1);
 
     assert_eq!(prod1.ring_degree, prod2.ring_degree);
-    assert!(check_vecs_almost_equal(prod1.coeffs, prod2.coeffs, error));
+    assert!(check_vecs_almost_equal(&prod1.coeffs, &prod2.coeffs, error));
 }
 
 #[test]
@@ -449,7 +449,7 @@ fn test_multiply_associative_float<T>(error: f64)
     let total_prod2 = poly1.multiply(&prod2);
 
     assert_eq!(total_prod1.ring_degree, total_prod2.ring_degree);
-    assert!(check_vecs_almost_equal(total_prod1.coeffs, total_prod2.coeffs, error));
+    assert!(check_vecs_almost_equal(&total_prod1.coeffs, &total_prod2.coeffs, error));
 }
 
 #[test]
@@ -481,7 +481,7 @@ fn test_multiply_associative_complex<T>(error: f64)
     let total_prod2 = poly1.multiply(&prod2);
 
     assert_eq!(total_prod1.ring_degree, total_prod2.ring_degree);
-    assert!(check_vecs_almost_equal(total_prod1.coeffs, total_prod2.coeffs, error));
+    assert!(check_vecs_almost_equal(&total_prod1.coeffs, &total_prod2.coeffs, error));
 }
 
 #[test]
@@ -555,7 +555,7 @@ fn test_distributive_float<T>(error: f64)
     let total2 = prod1.add(&prod2);
 
     assert_eq!(total1.ring_degree, total2.ring_degree);
-    assert!(check_vecs_almost_equal(total1.coeffs, total2.coeffs, error));
+    assert!(check_vecs_almost_equal(&total1.coeffs, &total2.coeffs, error));
 }
 
 #[test]
@@ -589,7 +589,7 @@ fn test_distributive_complex<T>(error: f64)
     let total2 = prod1.add(&prod2);
 
     assert_eq!(total1.ring_degree, total2.ring_degree);
-    assert!(check_vecs_almost_equal(total1.coeffs, total2.coeffs, error));
+    assert!(check_vecs_almost_equal(&total1.coeffs, &total2.coeffs, error));
 }
 
 #[test]
