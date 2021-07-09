@@ -1,6 +1,7 @@
 //! Math module
 pub mod polynomial;
 pub mod ring;
+pub mod utilities;
 
 pub use crate::traits::{Zero, Abs};
 

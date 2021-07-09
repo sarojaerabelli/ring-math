@@ -1,9 +1,10 @@
 // Tests
 use super::*;
 use rand::{distributions::Standard, prelude::Distribution, Rng};
-use utilities::{generate_random_float_vector};
-use crate::ring::Complex;
-use crate::traits::Abs;
+use crate::utilities::{generate_random_float_vector, generate_random_complex_vector,
+                generate_random_modint32_vector, generate_random_modint64_vector};
+use crate::ring::{Complex, ModInteger32, ModInteger64};
+use crate::traits::{Abs, Zero};
 use std::ops::{Sub, Div};
 use std::cmp::PartialOrd;
 use std::fmt::Debug;
@@ -89,9 +90,21 @@ fn test_add_different_ring_degrees_fail_complex_f64() {
     test_add_different_ring_degrees_fail::<Complex<f64>>();
 }
 
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_add_different_ring_degrees_fail_modint32() {
+    test_add_different_ring_degrees_fail::<ModInteger32>();
+}
+
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_add_different_ring_degrees_fail_modint64() {
+    test_add_different_ring_degrees_fail::<ModInteger64>();
+}
+
 fn test_add_commutative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
-        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd  + std::fmt::Debug +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd  + Debug +
         Div + Abs<T> + Div<Output = T>{
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
@@ -126,9 +139,36 @@ fn test_add_commutative_float_f64() {
     test_add_commutative_float::<f64>(F64_ERROR);
 }
 
+fn test_add_commutative_complex<T>(error: f64)
+        where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd  + std::fmt::Debug +
+        Div + Abs<T> + Div<Output = T> {
+    // Generate random polynomials.
+    let mut rng = rand::thread_rng();
+    let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
+    let rand_vec1: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
+    let rand_vec2: Vec<Complex<T>> = generate_random_complex_vector::<T>(ring_degree);
+
+    let poly1 = Polynomial {
+        ring_degree,
+        coeffs: rand_vec1,
+    };
+    let poly2 = Polynomial {
+        ring_degree,
+        coeffs: rand_vec2,
+    };
+
+    // Test that p1 + p2 = p2 + p1.
+    let sum1 = poly1.add(&poly2);
+    let sum2 = poly2.add(&poly1);
+
+    assert_eq!(sum1.ring_degree, sum2.ring_degree);
+    assert!(check_vecs_almost_equal(sum1.coeffs, sum2.coeffs, error));
+}
+
 fn test_add_associative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
-        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + Debug +
         Div + Abs<T> + Div<Output = T>{
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
@@ -224,7 +264,7 @@ fn test_multiply_different_ring_degrees_fail_complex_f64() {
 
 fn test_multiply_commutative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
-        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + Debug +
         Div + Abs<T> + Div<Output = T> {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
@@ -261,7 +301,7 @@ fn test_multiply_commutative_float_f64() {
 
 fn test_multiply_associative_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
-        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + Debug +
         Div + Abs<T> + Div<Output = T> {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
@@ -306,7 +346,7 @@ fn test_multiply_associative_float_f64() {
 
 fn test_distributive_float<T>(error: f64)
         where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
-        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + Debug +
         Div + Abs<T> + Div<Output = T> {
 
     // Generate random polynomials.
