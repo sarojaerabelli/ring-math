@@ -1,7 +1,8 @@
 //! Complex number module
 use std::ops::{Add, Sub, Mul, AddAssign};
+use std::cmp::{PartialEq, Eq};
 use std::fmt;
-use crate::traits::{Zero, Abs};
+use crate::traits::{Zero, One, Abs};
 
 /// Structure representing a complex number
 ///
@@ -9,12 +10,14 @@ use crate::traits::{Zero, Abs};
 /// * `real` - Real part of complex number
 /// * `imag` - Imaginary part of complex number
 #[derive(Copy, Clone)]
-pub struct Complex<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> {
+pub struct Complex<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T>
+                   + Zero<T> + One<T>+ Copy + Abs<T> + fmt::Debug + PartialEq> {
     pub real: T,
     pub imag: T
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> Add for Complex<T> {
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> Add for Complex<T> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
@@ -25,7 +28,8 @@ impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + A
     }
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> AddAssign for Complex<T> {
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> AddAssign for Complex<T> {
     fn add_assign(&mut self, other: Self) {
         *self = Self {
             real: self.real + other.real,
@@ -34,7 +38,8 @@ impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + A
     }
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> Sub for Complex<T> {
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> Sub for Complex<T> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
@@ -45,7 +50,8 @@ impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + A
     }
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> Mul for Complex<T> {
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> Mul for Complex<T> {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self::Output {
@@ -56,19 +62,29 @@ impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + A
     }
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> Zero<Complex<T>> for Complex<T> {
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> Zero<Complex<T>> for Complex<T> {
     fn zero() -> Complex<T> {
         return Complex{real: T::zero(), imag: T::zero()}
     }
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> Abs<Complex<T>> for Complex<T> {
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+      + Copy + Abs<T> + fmt::Debug + PartialEq> One<Complex<T>> for Complex<T> {
+    fn one() -> Complex<T> {
+        return Complex{real: T::one(), imag: T::zero()}
+    }
+}
+
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> Abs<Complex<T>> for Complex<T> {
     fn abs(self) -> f64 {
         return T::abs(self.real * self.real + self.imag * self.imag);
     }
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + Abs<T> + fmt::Debug> fmt::Debug for Complex<T> {
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> fmt::Debug for Complex<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Complex")
          .field("real", &self.real)
@@ -76,6 +92,16 @@ impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + Copy + A
          .finish()
     }
 }
+
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> PartialEq for Complex<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.real == other.real && self.imag == other.imag
+    }
+}
+
+impl<T: Mul<Output = T> + Add<Output = T> + Sub<Output = T> + Zero<T> + One<T>
+     + Copy + Abs<T> + fmt::Debug + PartialEq> Eq for Complex<T> {}
 
 /// Structure representing an integer in mod 2^32
 ///
@@ -120,6 +146,22 @@ impl Zero<ModInteger32> for ModInteger32 {
     }
 }
 
+impl fmt::Debug for ModInteger32 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ModInteger32")
+         .field("value", &self.value)
+         .finish()
+    }
+}
+
+impl PartialEq for ModInteger32 {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
+    }
+}
+
+impl Eq for ModInteger32 {}
+
 /// Structure representing an integer in mod 2^64
 ///
 /// # Attributes
@@ -162,6 +204,22 @@ impl Zero<ModInteger64> for ModInteger64 {
         return ModInteger64{value: 0};
     }
 }
+
+impl fmt::Debug for ModInteger64 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ModInteger64")
+         .field("value", &self.value)
+         .finish()
+    }
+}
+
+impl PartialEq for ModInteger64 {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
+    }
+}
+
+impl Eq for ModInteger64 {}
 
 #[cfg(test)]
 mod tests;

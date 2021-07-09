@@ -3,7 +3,7 @@ pub mod polynomial;
 pub mod ring;
 pub mod utilities;
 
-pub use crate::traits::{Zero, Abs};
+pub use crate::traits::{Zero, One, Abs};
 
 pub mod traits;
 
@@ -16,6 +16,18 @@ impl Zero<f32> for f32 {
 impl Zero<f64> for f64 {
     fn zero() -> f64 {
         return 0.0;
+    }
+}
+
+impl One<f32> for f32 {
+    fn one() -> f32 {
+        return 1.0;
+    }
+}
+
+impl One<f64> for f64 {
+    fn one() -> f64 {
+        return 1.0;
     }
 }
 

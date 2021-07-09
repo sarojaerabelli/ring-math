@@ -1,8 +1,9 @@
 use rand::{distributions::Standard, prelude::Distribution, Rng};
 use std::ops::{Add, Sub, Mul};
 use std::fmt::Debug;
+use std::cmp::PartialEq;
 use crate::ring::{Complex, ModInteger32, ModInteger64};
-use crate::traits::{Zero, Abs};
+use crate::traits::{Zero, One, Abs};
 
 pub fn check_vecs_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, percent_error: f64) -> bool 
         where T: Copy + Sub<Output = T> + Debug + Abs<T>{
@@ -32,7 +33,7 @@ pub fn generate_random_float_vector<T>(size: usize) -> Vec<T>
 
 pub fn generate_random_complex_vector<T>(size: usize) -> Vec<Complex<T>> 
         where Standard: Distribution<T>, T: Mul<Output = T> + Add + Sub + Zero<T> +
-        Sub<Output = T> + Copy + Add<Output = T> + Abs<T> + Debug {
+        One<T> + Sub<Output = T> + Copy + Add<Output = T> + Abs<T> + Debug + PartialEq {
     let mut rng = rand::thread_rng();
     let mut rand_vec: Vec<Complex<T>> = Vec::new();
     for _ in 0..size {
