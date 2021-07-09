@@ -8,8 +8,8 @@ use crate::traits::Zero;
 /// * `ring_degree` - the degree N of the polynomial ring
 /// * `coeffs` - the coefficients of the polynomial
 pub struct Polynomial<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> {
-    ring_degree: usize,
-    coeffs: Vec<T>
+    pub ring_degree: usize,
+    pub coeffs: Vec<T>
 }
 
 impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Polynomial<T> {
@@ -45,7 +45,7 @@ impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Polynomi
     /// # Output
     /// * a new instantiation of a Polynomial, which is the sum of the two polynomials
     /// ```
-    fn add(&self, other: &Polynomial<T>) -> Polynomial<T> {
+    pub fn add(&self, other: &Polynomial<T>) -> Polynomial<T> {
         self.check_coeff_length();
         if self.ring_degree != other.ring_degree {
             panic!("Ring degrees should be equal. {} != {}", self.ring_degree, other.ring_degree);
@@ -66,7 +66,7 @@ impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Polynomi
     /// # Output
     /// * a new instantiation of a Polynomial, which is the product of the two polynomials
     /// ```
-    fn multiply(&self, other: &Polynomial<T>) -> Polynomial<T> {
+    pub fn multiply(&self, other: &Polynomial<T>) -> Polynomial<T> {
         self.check_coeff_length();
         if self.ring_degree != other.ring_degree {
             panic!("Ring degrees should be equal. {} != {}", self.ring_degree, other.ring_degree);
@@ -92,7 +92,7 @@ impl<T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign> Polynomi
     /// # Output
     /// * a new instantiation of a Polynomial, which is the product of the polynomial with x
     /// ```
-    fn multiply_by_x(&self) -> Polynomial<T> {
+    pub fn multiply_by_x(&self) -> Polynomial<T> {
         self.check_coeff_length();
         let mut prod: Polynomial<T> = Polynomial::new(self.ring_degree);
         prod.coeffs[0] = self.coeffs[self.ring_degree - 1];

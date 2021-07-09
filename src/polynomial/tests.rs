@@ -1,33 +1,15 @@
 // Tests
 use super::*;
 use rand::{distributions::Standard, prelude::Distribution, Rng};
+use utilities::{generate_random_float_vector, check_lists_almost_equal, Abs};
+use crate::ring::Complex;
+use std::ops::{Sub, Div};
+use std::cmp::PartialOrd;
 
-fn generate_random_float_vector<T>(size: usize) -> Vec<T> 
-        where Standard: Distribution<T>, T: std::ops::Mul<Output = T> {
-    let mut rng = rand::thread_rng();
-    let mut rand_vec: Vec<T> = Vec::new();
-    for _ in 0..size {
-        rand_vec.push(rng.gen::<T>());
-    }
-    rand_vec
-}
-
-fn check_lists_almost_equal<T>(vec1: Vec<T>, vec2: Vec<T>, error: T) -> bool 
-        where T: std::cmp::PartialOrd + Copy + std::ops::Sub<Output = T> {
-    if vec1.len() != vec2.len() {
-        return false;
-    }
-
-    for i in 0..vec1.len() {
-        if vec1[i] - vec2[i] > error {
-            return false;
-        } else if vec2[i] - vec1[i] > error {
-            return false;
-        }
-    }
-
-    true
-}
+const MAX_TEST_DEGREE: usize = 2048;
+const F32_ADD_ERROR: f32 = 0.000001;
+const F32_MULTIPLY_ERROR: f32 = 0.01;
+const F64_ERROR: f64 = 0.0000000001;
 
 #[test]
 #[should_panic(expected = "Ring degree should be equal to vector length. 10 != 9")]
@@ -56,23 +38,48 @@ fn test_add_known_answer() {
     assert_eq!(sum.coeffs, vec![5.0, 7.0, 7.0, 12.0, 14.0, 7.0, 8.0, 9.0, 10.0, 13.0]);
 }
 
-#[test]
-#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
-fn test_add_different_ring_degrees_fail() {
-    let poly1: Polynomial<f64> = Polynomial::new(10);
-    let poly2: Polynomial<f64> = Polynomial::new(14);
+fn test_add_different_ring_degrees_fail<T>() 
+        where T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign{
+    let poly1: Polynomial<T> = Polynomial::new(10);
+    let poly2: Polynomial<T> = Polynomial::new(14);
 
     // Should panic because the polynomials have different ring degrees.
     poly1.add(&poly2);
 }
 
 #[test]
-fn test_add_commutative() {
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_add_different_ring_degrees_fail_f32() {
+    test_add_different_ring_degrees_fail::<f32>();
+}
+
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_add_different_ring_degrees_fail_f64() {
+    test_add_different_ring_degrees_fail::<f64>();
+}
+
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_add_different_ring_degrees_fail_complex_f32() {
+    test_add_different_ring_degrees_fail::<Complex<f32>>();
+}
+
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_add_different_ring_degrees_fail_complex_f64() {
+    test_add_different_ring_degrees_fail::<Complex<f64>>();
+}
+
+fn test_add_commutative_float<T>(error: T)
+        where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd  + std::fmt::Debug +
+        Div + Abs<T> + Div<Output = T>{
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
-    let ring_degree = rng.gen_range(1..=2048);
-    let rand_vec1: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec2: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
+    let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
+    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
 
     let poly1 = Polynomial {
         ring_degree,
@@ -88,17 +95,29 @@ fn test_add_commutative() {
     let sum2 = poly2.add(&poly1);
 
     assert_eq!(sum1.ring_degree, sum2.ring_degree);
-    assert!(check_lists_almost_equal(sum1.coeffs, sum2.coeffs, 0.00000001));
+    assert!(check_lists_almost_equal(sum1.coeffs, sum2.coeffs, error));
 }
 
 #[test]
-fn test_add_associative() {
+fn test_add_commutative_float_f32() {
+    test_add_commutative_float::<f32>(F32_ADD_ERROR);
+}
+
+#[test]
+fn test_add_commutative_float_f64() {
+    test_add_commutative_float::<f64>(F64_ERROR);
+}
+
+fn test_add_associative_float<T>(error: T)
+        where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Div + Abs<T> + Div<Output = T>{
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
-    let ring_degree = rng.gen_range(1..=2048);
-    let rand_vec1: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec2: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec3: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
+    let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
+    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec3: Vec<T> = generate_random_float_vector::<T>(ring_degree);
 
     let poly1 = Polynomial {
         ring_degree,
@@ -121,7 +140,17 @@ fn test_add_associative() {
     let total_sum2 = poly1.add(&sum2);
 
     assert_eq!(total_sum1.ring_degree, total_sum2.ring_degree);
-    assert!(check_lists_almost_equal(total_sum1.coeffs, total_sum2.coeffs, 0.00000001));
+    assert!(check_lists_almost_equal(total_sum1.coeffs, total_sum2.coeffs, error));
+}
+
+#[test]
+fn test_add_associative_float_f32() {
+    test_add_associative_float::<f32>(F32_ADD_ERROR);
+}
+
+#[test]
+fn test_add_associative_float_f64() {
+    test_add_associative_float::<f64>(F64_ERROR);
 }
 
 #[test]
@@ -138,26 +167,52 @@ fn test_multiply_known_answer() {
     let sum = poly1.multiply(&poly2);
 
     assert_eq!(sum.ring_degree, poly1.ring_degree);
-    assert_eq!(sum.coeffs, vec![241.0, 228.0, 225.0, 182.0, 129.0, 156.0, 183.0, 210.0, 237.0, 244.0]);
+    assert_eq!(sum.coeffs, vec![241.0, 228.0, 225.0, 182.0, 129.0, 156.0, 183.0, 210.0,
+                                237.0, 244.0]);
 }
 
-#[test]
-#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
-fn test_multiply_different_ring_degrees_fail() {
-    let poly1: Polynomial<f64> = Polynomial::new(10);
-    let poly2: Polynomial<f64> = Polynomial::new(14);
+fn test_multiply_different_ring_degrees_fail<T>() 
+        where T: Add<Output = T> + Mul<Output = T> + Copy + Zero<T> + AddAssign{
+    let poly1: Polynomial<T> = Polynomial::new(10);
+    let poly2: Polynomial<T> = Polynomial::new(14);
 
     // Should panic because the polynomials have different ring degrees.
     poly1.multiply(&poly2);
 }
 
 #[test]
-fn test_multiply_commutative() {
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_multiply_different_ring_degrees_fail_f32() {
+    test_multiply_different_ring_degrees_fail::<f32>();
+}
+
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_multiply_different_ring_degrees_fail_f64() {
+    test_multiply_different_ring_degrees_fail::<f64>();
+}
+
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_multiply_different_ring_degrees_fail_complex_f32() {
+    test_multiply_different_ring_degrees_fail::<Complex<f32>>();
+}
+
+#[test]
+#[should_panic(expected = "Ring degrees should be equal. 10 != 14")]
+fn test_multiply_different_ring_degrees_fail_complex_f64() {
+    test_multiply_different_ring_degrees_fail::<Complex<f64>>();
+}
+
+fn test_multiply_commutative_float<T>(error: T)
+        where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Div + Abs<T> + Div<Output = T> {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
-    let ring_degree = rng.gen_range(1..=2048);
-    let rand_vec1: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec2: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
+    let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
+    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
 
     let poly1 = Polynomial {
         ring_degree,
@@ -173,17 +228,29 @@ fn test_multiply_commutative() {
     let prod2 = poly2.multiply(&poly1);
 
     assert_eq!(prod1.ring_degree, prod2.ring_degree);
-    assert!(check_lists_almost_equal(prod1.coeffs, prod2.coeffs, 0.00000001));
+    assert!(check_lists_almost_equal(prod1.coeffs, prod2.coeffs, error));
 }
 
 #[test]
-fn test_multiply_associative() {
+fn test_multiply_commutative_float_f32() {
+    test_multiply_commutative_float::<f32>(F32_MULTIPLY_ERROR);
+}
+
+#[test]
+fn test_multiply_commutative_float_f64() {
+    test_multiply_commutative_float::<f64>(F64_ERROR);
+}
+
+fn test_multiply_associative_float<T>(error: T)
+        where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Div + Abs<T> + Div<Output = T> {
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
-    let ring_degree = rng.gen_range(1..=2048);
-    let rand_vec1: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec2: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec3: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
+    let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
+    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec3: Vec<T> = generate_random_float_vector::<T>(ring_degree);
 
     let poly1 = Polynomial {
         ring_degree,
@@ -206,17 +273,30 @@ fn test_multiply_associative() {
     let total_prod2 = poly1.multiply(&prod2);
 
     assert_eq!(total_prod1.ring_degree, total_prod2.ring_degree);
-    assert!(check_lists_almost_equal(total_prod1.coeffs, total_prod2.coeffs, 0.00000001));
+    assert!(check_lists_almost_equal(total_prod1.coeffs, total_prod2.coeffs, error));
 }
 
 #[test]
-fn test_distributive() {
+fn test_multiply_associative_float_f32() {
+    test_multiply_associative_float::<f32>(F32_MULTIPLY_ERROR);
+}
+
+#[test]
+fn test_multiply_associative_float_f64() {
+    test_multiply_associative_float::<f64>(F64_ERROR);
+}
+
+fn test_distributive_float<T>(error: T)
+        where Standard: Distribution<T>, T: Add<Output = T> + Mul<Output = T> + Copy +
+        Zero<T> + AddAssign + Sub + Sub<Output = T> + PartialOrd + std::fmt::Debug +
+        Div + Abs<T> + Div<Output = T> {
+
     // Generate random polynomials.
     let mut rng = rand::thread_rng();
-    let ring_degree = rng.gen_range(1..=2048);
-    let rand_vec1: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec2: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
-    let rand_vec3: Vec<f64> = generate_random_float_vector::<f64>(ring_degree);
+    let ring_degree = rng.gen_range(1..=MAX_TEST_DEGREE);
+    let rand_vec1: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec2: Vec<T> = generate_random_float_vector::<T>(ring_degree);
+    let rand_vec3: Vec<T> = generate_random_float_vector::<T>(ring_degree);
 
     let poly1 = Polynomial {
         ring_degree,
@@ -240,7 +320,17 @@ fn test_distributive() {
     let total2 = prod1.add(&prod2);
 
     assert_eq!(total1.ring_degree, total2.ring_degree);
-    assert!(check_lists_almost_equal(total1.coeffs, total2.coeffs, 0.00000001));
+    assert!(check_lists_almost_equal(total1.coeffs, total2.coeffs, error));
+}
+
+#[test]
+fn test_distributive_float_f32() {
+    test_distributive_float::<f32>(F32_MULTIPLY_ERROR);
+}
+
+#[test]
+fn test_distributive_float_f64() {
+    test_distributive_float::<f64>(F64_ERROR);
 }
 
 #[test]
@@ -280,3 +370,4 @@ fn test_multiply_by_x_compare_multiply() {
     assert_eq!(prod1.ring_degree, prod2.ring_degree);
     assert_eq!(prod1.coeffs, prod2.coeffs);
 }
+
